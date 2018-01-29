@@ -7,25 +7,52 @@ public class Main {
 
     public void run() {
         // 玩家信息输入
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("请输入白棋棋手名称：");
-//        String whitePLayer = scanner.nextLine();
-//        System.out.println("请输入黑棋棋手名称：");
-//        String blackPlayer = scanner.nextLine();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("请输入白棋棋手名称：");
+        String whitePlayer = scanner.nextLine();
+        System.out.println("请输入黑棋棋手名称：");
+        String blackPlayer = scanner.nextLine();
 
         // 绘制初始棋盘
-        drawBoard();
+        int size = 15;
+        int[][] board = new int[size][size];
+        drawBoard(board, size);
 
         // 游戏开始
         int win = 0;
-
-        // 下棋 Loop
+        int currentPlayer = 0;
         do {
-            // 下棋
+            // 提醒下棋
+            String currentPlayerName = currentPlayer == 0 ? whitePlayer : blackPlayer;
+            System.out.println("该" + currentPlayerName + "下棋了");
+
+            int x, y;
+            boolean canPlace = true;
+            do {
+                if (!canPlace) {
+                    System.out.println("这里不能放棋子，请重新输入");
+                }
+                String coord = scanner.nextLine();
+                //拿到coord真实坐标
+                y = coord.charAt(0) - 'A';
+                x = Integer.valueOf(coord.substring(1)) - 1;
+
+                canPlace = true;
+                canPlace = canPlace && x >= 0 && x < size && y >= 0 && y < size;
+                canPlace = canPlace && board[y][x] == 0;
+            } while(!canPlace);
+            board[y][x] = currentPlayer == 0 ? 1 : 2;
+
             // 绘制棋盘
-            // 检测是否触发胜利条件
+            drawBoard(board, size);
+
+            // TODO 检测是否触发胜利条件
+
+            currentPlayer++;
+            currentPlayer %= 2;
         } while(win == 0);
 
+        // 显示胜利方
         if (win == 1) {
             System.out.println(whitePlayer + "赢了");
         } else if(win == 2) {
@@ -33,15 +60,14 @@ public class Main {
         } else {
             System.out.println("平局");
         }
-
     }
 
-    /*
-    绘制棋盘
+    /**
+     * 绘制棋盘
+     * @param board
+     * @param size
      */
-    public void drawBoard() {
-        int size = 15;
-        int[][] board = new int[size][size];
+    public void drawBoard(int[][] board, int size) {
         System.out.print("   ");
         for (int i = 0; i < size; i++) {
             int num = i + 1;
